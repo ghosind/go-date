@@ -16,10 +16,11 @@ func testFormat(t *testing.T, time *Time, format, layout string) {
 
 func TestFormat(t *testing.T) {
 	for _, time := range []*Time{
-		New(),            // zero
-		New(time.Time{}), // now
-		New(time.Date(2023, 6, 05, 3, 6, 9, 0, time.UTC)),      // 1-digit
-		New(time.Date(2023, 6, 10, 10, 20, 30, 999, time.UTC)), // 2-digits
+		Date(1, 0, 0, 0, 0, 0, 0),          // zero
+		Now(),                              // now
+		New(time.Time{}),                   // now with built-in Time
+		Date(2023, 6, 05, 3, 6, 9, 0),      // 1-digit
+		Date(2023, 6, 10, 10, 20, 30, 999), // 2-digits
 	} {
 		testFormat(t, time, "", "")
 		testFormat(t, time, "YYYY-MM-DDTHH:mm:ss.SSS", "2006-01-02T15:04:05.000")

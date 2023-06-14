@@ -168,53 +168,45 @@ func (t Time) formatByLayout(layout string, buf []byte) []byte {
 
 		switch token {
 		case layoutTokenYear:
-			buf = appendIntToBuffer(buf, t.time.Year(), 4)
+			buf = appendIntToBuffer(buf, t.Year(), 4)
 		case layoutTokenYearTwo:
-			buf = appendIntToBuffer(buf, t.time.Year()%100, 2)
+			buf = appendIntToBuffer(buf, t.Year()%100, 2)
 		case layoutTokenMonth:
-			buf = appendIntToBuffer(buf, int(t.time.Month()), 0)
+			buf = appendIntToBuffer(buf, int(t.Month()), 0)
 		case layoutTokenMonthTwo:
-			buf = appendIntToBuffer(buf, int(t.time.Month()), 2)
+			buf = appendIntToBuffer(buf, int(t.Month()), 2)
 		case layoutTokenMonthAbbr:
-			abbr := abbrMonthNames[t.time.Month()-1]
+			abbr := abbrMonthNames[t.Month()-1]
 			buf = append(buf, abbr...)
 		case layoutTokenMonthFull:
-			name := fullMonthNames[t.time.Month()-1]
+			name := fullMonthNames[t.Month()-1]
 			buf = append(buf, name...)
 		case layoutTokenDay:
-			buf = appendIntToBuffer(buf, t.time.Day(), 1)
+			buf = appendIntToBuffer(buf, t.Day(), 1)
 		case layoutTokenDayTwo:
-			buf = appendIntToBuffer(buf, t.time.Day(), 2)
+			buf = appendIntToBuffer(buf, t.Day(), 2)
 		case layoutTokenHour:
-			buf = appendIntToBuffer(buf, t.time.Hour(), 1)
+			buf = appendIntToBuffer(buf, t.Hour(), 1)
 		case layoutTokenHourTwo:
-			buf = appendIntToBuffer(buf, t.time.Hour(), 2)
+			buf = appendIntToBuffer(buf, t.Hour(), 2)
 		case layoutTokenHour12:
-			hour := t.time.Hour() % 12
-			if hour == 0 {
-				hour = 12
-			}
-			buf = appendIntToBuffer(buf, hour, 1)
+			buf = appendIntToBuffer(buf, t.Hour12(), 1)
 		case layoutTokenHour12Two:
-			hour := t.time.Hour() % 12
-			if hour == 0 {
-				hour = 12
-			}
-			buf = appendIntToBuffer(buf, hour, 2)
+			buf = appendIntToBuffer(buf, t.Hour12(), 2)
 		case layoutTokenMinute:
-			buf = appendIntToBuffer(buf, t.time.Minute(), 1)
+			buf = appendIntToBuffer(buf, t.Minute(), 1)
 		case layoutTokenMinuteTwo:
-			buf = appendIntToBuffer(buf, t.time.Minute(), 2)
+			buf = appendIntToBuffer(buf, t.Minute(), 2)
 		case layoutTokenSecond:
-			buf = appendIntToBuffer(buf, t.time.Second(), 1)
+			buf = appendIntToBuffer(buf, t.Second(), 1)
 		case layoutTokenSecondTwo:
-			buf = appendIntToBuffer(buf, t.time.Second(), 2)
+			buf = appendIntToBuffer(buf, t.Second(), 2)
 		case layoutTokenMillisecond:
-			buf = appendIntToBuffer(buf, t.time.Nanosecond()/1000/1000/100, 1)
+			buf = appendIntToBuffer(buf, t.Millisecond()/100, 1)
 		case layoutTokenMillisecondTwo:
-			buf = appendIntToBuffer(buf, t.time.Nanosecond()/1000/1000/10, 2)
+			buf = appendIntToBuffer(buf, t.Millisecond()/10, 2)
 		case layoutTokenMillisecondThree:
-			buf = appendIntToBuffer(buf, t.time.Nanosecond()/1000/1000, 3)
+			buf = appendIntToBuffer(buf, t.Millisecond(), 3)
 		}
 	}
 
