@@ -88,8 +88,8 @@ func (t *Time) Hour() int {
 // Hour12 returns the 12-hours clock hour offset within the day specified by the time, in the
 // range [1, 12].
 func (t *Time) Hour12() int {
-	hour := t.Hour()
-	if hour%12 == 0 {
+	hour := t.Hour() % 12
+	if hour == 0 {
 		hour = 12
 	}
 	return hour
