@@ -80,9 +80,19 @@ func (t *Time) ISOWeek() (year, week int) {
 	return t.time.ISOWeek()
 }
 
-// Hour returns he hour offset within the day specified by the time, in the range [0, 23].
+// Hour returns the hour offset within the day specified by the time, in the range [0, 23].
 func (t *Time) Hour() int {
 	return t.time.Hour()
+}
+
+// Hour12 returns the 12-hours clock hour offset within the day specified by the time, in the
+// range [1, 12].
+func (t *Time) Hour12() int {
+	hour := t.Hour()
+	if hour%12 == 0 {
+		hour = 12
+	}
+	return hour
 }
 
 // Minute returns he minute offset within the hour specified by the time, in the range [0, 59].
