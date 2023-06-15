@@ -184,9 +184,19 @@ func (t Time) GobEncode() ([]byte, error) {
 	return t.time.GobEncode()
 }
 
+// GobDecode implements the gob.GobDecoder interface.
+func (t *Time) GobDecode(data []byte) error {
+	return (&t.time).GobDecode(data)
+}
+
 // MarshalBinary implements the encoding.BinaryMarshaler interface.
 func (t *Time) MarshalBinary() ([]byte, error) {
 	return t.time.MarshalBinary()
+}
+
+// UnmarshalBinary implements the encoding.BinaryUnmarshaler interface.
+func (t *Time) UnmarshalBinary(data []byte) error {
+	return (&t.time).UnmarshalBinary(data)
 }
 
 // MarshalJSON implements the json.Marshaler interface. The time is a quoted string in the
@@ -196,11 +206,23 @@ func (t *Time) MarshalJSON() ([]byte, error) {
 	return t.time.MarshalJSON()
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface. The time must be a quoted string in
+// the RFC 3339 format.
+func (t *Time) UnmarshalJSON(data []byte) error {
+	return (&t.time).UnmarshalJSON(data)
+}
+
 // MarshalText implements the encoding.TextMarshaler interface. The time is formatted in RFC 3339
 // format with sub-second precision. If the timestamp cannot be represented as valid RFC 3339
 // (e.g., the year is out of range), then an error is reported.
 func (t *Time) MarshalText() ([]byte, error) {
 	return t.time.MarshalText()
+}
+
+// UnmarshalText implements the encoding.TextUnmarshaler interface. The time must be in the
+// RFC 3339 format.
+func (t *Time) UnmarshalText(data []byte) error {
+	return (&t.time).UnmarshalText(data)
 }
 
 // Location returns the time zone information associated with the time.
