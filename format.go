@@ -47,6 +47,14 @@ const (
 	layoutTokenMillisecondTwo
 	// layoutTokenMillisecondThree is the three-digits millisecond.
 	layoutTokenMillisecondThree
+	// layoutTokenPMUpper is post or ante meridiem in upper-case.
+	layoutTokenPMUpper
+	// layoutTokenPMLower is post or ante meridiem in upper-case.
+	layoutTokenPMLower
+	// layoutTokenTZ is the timezone offset from UTC.
+	layoutTokenTZ
+	// layoutTokenTZColon is the timezone offset from UTC that separate by colon.
+	layoutTokenTZColon
 )
 
 var abbrMonthNames = []string{
@@ -136,6 +144,16 @@ func nextLayoutToken(layout string) (int, string, string) {
 		} else {
 			return layoutTokenMillisecond, layout[0:1], layout[1:]
 		}
+	case 'A':
+		return layoutTokenPMUpper, layout[0:1], layout[1:]
+	case 'a':
+		return layoutTokenPMLower, layout[0:1], layout[1:]
+	case 'Z':
+		if strings.HasPrefix(layout, "ZZ") {
+			return layoutTokenTZ, layout[0:2], layout[2:]
+		} else {
+			return layoutTokenTZColon, layout[0:1], layout[1:]
+		}
 	case '\\': // Escape next character
 		if len(layout) >= 2 {
 			return layoutTokenNone, layout[1:2], layout[2:]
@@ -207,6 +225,35 @@ func (t Time) formatByLayout(layout string, buf []byte) []byte {
 			buf = appendIntToBuffer(buf, t.Millisecond()/10, 2)
 		case layoutTokenMillisecondThree:
 			buf = appendIntToBuffer(buf, t.Millisecond(), 3)
+		case layoutTokenPMUpper:
+			hour := t.Hour()
+			if hour > 12 {
+				buf = append(buf, "PM"...)
+			} else {
+				buf = append(buf, "AM"...)
+			}
+		case layoutTokenPMLower:
+			hour := t.Hour()
+			if hour > 12 {
+				buf = append(buf, "pm"...)
+			} else {
+				buf = append(buf, "am"...)
+			}
+		case layoutTokenTZ, layoutTokenTZColon:
+			_, offset := t.Zone()
+			zone := offset / 60
+			if zone < 0 {
+				buf = append(buf, '-')
+				zone = -zone
+			} else {
+				buf = append(buf, '+')
+			}
+
+			buf = appendIntToBuffer(buf, zone/60, 2)
+			if token == layoutTokenTZColon {
+				buf = append(buf, ':')
+			}
+			buf = appendIntToBuffer(buf, zone%60, 2)
 		}
 	}
 
