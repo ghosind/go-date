@@ -1,9 +1,10 @@
 package date
 
 import (
-	"reflect"
 	"testing"
 	"time"
+
+	"github.com/ghosind/go-assert"
 )
 
 func TestMarshalAndUnmarshalText(t *testing.T) {
@@ -16,8 +17,8 @@ func TestMarshalAndUnmarshalText(t *testing.T) {
 
 	if txt, err := time.MarshalText(); err != nil {
 		t.Errorf("Time.MarshalText() error = %v, want nil", err)
-	} else if string(txt) != wantTime {
-		t.Errorf("Time.MarshalText() = %v, want \"%s\"", string(txt), wantTime)
+	} else {
+		assert.DeepEqual(t, string(txt), wantTime)
 	}
 }
 
@@ -31,8 +32,8 @@ func TestMarshalAndUnmarshalJSON(t *testing.T) {
 
 	if txt, err := time.MarshalJSON(); err != nil {
 		t.Errorf("Time.MarshalJSON() error = %v, want nil", err)
-	} else if string(txt) != wantTime {
-		t.Errorf("Time.MarshalJSON() = %v, want \"%s\"", string(txt), wantTime)
+	} else {
+		assert.DeepEqual(t, string(txt), wantTime)
 	}
 }
 
@@ -48,8 +49,8 @@ func TestMarshalAndUnmarshalBinary(t *testing.T) {
 
 	if testBin, err := testTime.MarshalBinary(); err != nil {
 		t.Errorf("Time.MarshalBinary() error = %v, want nil", err)
-	} else if !reflect.DeepEqual(bin, testBin) {
-		t.Errorf("time.MarshalBinary() = %v, want = %v", testBin, bin)
+	} else {
+		assert.DeepEqual(t, bin, testBin)
 	}
 }
 
@@ -65,7 +66,7 @@ func TestGeoEncodeAndDecode(t *testing.T) {
 
 	if testGob, err := testTime.GobEncode(); err != nil {
 		t.Errorf("Time.GobEncode() error = %v, want nil", err)
-	} else if !reflect.DeepEqual(gob, testGob) {
-		t.Errorf("time.GobEncode() = %v, want = %v", testGob, gob)
+	} else {
+		assert.DeepEqual(t, gob, testGob)
 	}
 }
