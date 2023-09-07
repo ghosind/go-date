@@ -10,9 +10,9 @@ import (
 
 func testFormat(a *assert.Assertion, time *Time, format, layout string) {
 	str := time.Format(format)
-	expect := time.time.Format(layout)
+	expect := time.Time.Format(layout)
 
-	a.DeepEqual(str, expect)
+	a.Equal(str, expect)
 }
 
 func TestFormat(t *testing.T) {
@@ -34,9 +34,9 @@ func TestFormat(t *testing.T) {
 		testFormat(a, time, "YYYY-MMM-DD hhA mm:ss.SS", "2006-Jan-02 03PM 04:05.00")
 		testFormat(a, time, "YY-M-D ha m:s \\Y", "06-1-2 3pm 4:5 Y")
 
-		expect := strconv.Itoa(time.time.Hour())
+		expect := strconv.Itoa(time.Hour())
 		hour := time.Format("H")
 
-		a.DeepEqual(hour, expect)
+		a.Equal(hour, expect)
 	}
 }

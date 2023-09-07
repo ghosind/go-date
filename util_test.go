@@ -10,7 +10,7 @@ func testAppendIntToBuffer(a *assert.Assertion, val, width int, expect string) {
 	buf := make([]byte, 0, len(expect))
 	buf = appendIntToBuffer(buf, val, width)
 
-	a.DeepEqual(string(buf), expect)
+	a.Equal(string(buf), expect)
 }
 
 func TestAppendIntToBuffer(t *testing.T) {
