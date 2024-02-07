@@ -43,13 +43,20 @@ func Date(year, month, day, hour, min, sec, nsec int, loc ...*time.Location) *Ti
 }
 
 // Hour12 returns the 12-hours clock hour offset within the day specified by the time, in the
-// range [1, 12].
+// range [1, 12]. See https://en.wikipedia.org/wiki/12-hour_clock for more details about the
+// value.
 func (t *Time) Hour12() int {
 	hour := t.Hour() % 12
 	if hour == 0 {
 		hour = 12
 	}
 	return hour
+}
+
+// Microsecond returns the microsecond offset within the second specified by the time, in the
+// range [0, 999999].
+func (t *Time) Microsecond() int {
+	return t.Nanosecond() / int(time.Microsecond)
 }
 
 // Millisecond returns the millisecond offset within the second specified by the time, in the
