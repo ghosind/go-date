@@ -1,42 +1,102 @@
 package date
 
 import (
-	"strconv"
 	"testing"
 	"time"
 
 	"github.com/ghosind/go-assert"
 )
 
-func testFormat(a *assert.Assertion, time *Time, format, layout string) {
-	str := time.Format(format)
-	expect := time.Time.Format(layout)
+func TestNextLayoutToken(t *testing.T) {
+	a := assert.New(t)
+	layout := "YYYY YY MMMM MMM MM M DD D HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
+	expectedTokens := []int{
+		layoutTokenYearLong, layoutTokenNone,
+		layoutTokenYear, layoutTokenNone,
+		layoutTokenMonthFull, layoutTokenNone,
+		layoutTokenMonthAbbr, layoutTokenNone,
+		layoutTokenMonthLong, layoutTokenNone,
+		layoutTokenMonth, layoutTokenNone,
+		layoutTokenDayLong, layoutTokenNone,
+		layoutTokenDay, layoutTokenNone,
+		layoutTokenHourLong, layoutTokenNone,
+		layoutTokenHour, layoutTokenNone,
+		layoutTokenHour12Long, layoutTokenNone,
+		layoutTokenHour12, layoutTokenNone,
+		layoutTokenMinuteLong, layoutTokenNone,
+		layoutTokenMinute, layoutTokenNone,
+		layoutTokenSecondLong, layoutTokenNone,
+		layoutTokenSecond, layoutTokenNone,
+		layoutTokenMillisecond, layoutTokenNone,
+		layoutTokenMillisecondTen, layoutTokenNone,
+		layoutTokenMillisecondHundred, layoutTokenNone,
+		layoutTokenPMUpper, layoutTokenNone,
+		layoutTokenPMLower, layoutTokenNone,
+		layoutTokenTZColon, layoutTokenNone,
+		layoutTokenTZ, layoutTokenNone,
+		layoutTokenNone, layoutTokenNone,
+		layoutTokenEnd,
+	}
 
-	a.Equal(str, expect)
+	for _, expected := range expectedTokens {
+		token, _, suffix := nextLayoutToken(layout)
+		layout = suffix
+		a.EqualNow(token, expected)
+	}
+
+	a.EqualNow(layout, "")
 }
 
 func TestFormat(t *testing.T) {
 	a := assert.New(t)
 
-	tzNY, _ := time.LoadLocation("America/New_York")
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
 	tzSH, _ := time.LoadLocation("Asia/Shanghai")
 
-	for _, time := range []*Time{
-		Date(1, 0, 0, 0, 0, 0, 0),                // zero
-		Now(),                                    // now
-		New(time.Time{}),                         // now with built-in Time
-		Date(2023, 6, 05, 3, 6, 9, 0, tzNY),      // 1-digit
-		Date(2023, 6, 10, 10, 20, 30, 999, tzSH), // 2-digits
-	} {
-		testFormat(a, time, "", "")
-		testFormat(a, time, "YYYY-MM-DDTHH:mm:ss.SSS Z", "2006-01-02T15:04:05.000 -07:00")
-		testFormat(a, time, "YY-MMMM-DDTHH:mm:ss.S ZZ", "06-January-02T15:04:05.0 -0700")
-		testFormat(a, time, "YYYY-MMM-DD hhA mm:ss.SS", "2006-Jan-02 03PM 04:05.00")
-		testFormat(a, time, "YY-M-D ha m:s \\Y", "06-1-2 3pm 4:5 Y")
-
-		expect := strconv.Itoa(time.Hour())
-		hour := time.Format("H")
-
-		a.Equal(hour, expect)
+	layout := "YYYY YY MMMM MMM MM M DD D HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
+	cases := []struct {
+		tm     *Time
+		expect string
+	}{
+		{
+			Date(2024, 1, 1, 0, 0, 0, 0),
+			"2024 24 January Jan 01 1 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+		},
+		{
+			Date(2024, 10, 1, 0, 0, 0, 0),
+			"2024 24 October Oct 10 10 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+		},
+		{
+			Date(2024, 1, 1, 1, 0, 0, 0),
+			"2024 24 January Jan 01 1 01 1 01 1 01 1 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+		},
+		{
+			Date(2024, 1, 1, 12, 0, 0, 0),
+			"2024 24 January Jan 01 1 01 1 12 12 12 12 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
+		},
+		{
+			Date(2024, 1, 1, 13, 0, 0, 0),
+			"2024 24 January Jan 01 1 01 1 13 13 01 1 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
+		},
+		{
+			Date(2024, 1, 1, 0, 0, 0, 0, tzLA),
+			"2024 24 January Jan 01 1 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am -08:00 -0800 Ho",
+		},
+		{
+			Date(2024, 1, 1, 0, 0, 0, 0, tzSH),
+			"2024 24 January Jan 01 1 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am +08:00 +0800 Ho",
+		},
 	}
+
+	for _, test := range cases {
+		testFormat(a, test.tm, layout, test.expect)
+	}
+}
+
+func testFormat(a *assert.Assertion, time *Time, layout, expect string) {
+	a.Helper()
+
+	str := time.Format(layout)
+
+	a.EqualNow(str, expect)
 }
