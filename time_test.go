@@ -7,58 +7,61 @@ import (
 	"github.com/ghosind/go-assert"
 )
 
-func TestMarshalAndUnmarshalText(t *testing.T) {
+func TestNew(t *testing.T) {
 	a := assert.New(t)
-	time := Now()
-	wantTime := "2000-01-01T00:00:00Z"
 
-	err := time.UnmarshalText([]byte(wantTime))
-	a.NilNow(err)
-
-	txt, err := time.MarshalText()
-	a.NilNow(err)
-	a.Equal(string(txt), wantTime)
+	a.LtNow(time.Since(New().Time), time.Microsecond)
+	tm := time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)
+	a.EqualNow(New(tm).Time, tm)
 }
 
-func TestMarshalAndUnmarshalJSON(t *testing.T) {
+func TestNow(t *testing.T) {
 	a := assert.New(t)
-	time := Now()
-	wantTime := `"2000-01-01T00:00:00Z"`
 
-	err := time.UnmarshalJSON([]byte(wantTime))
-	a.NilNow(err)
+	now := Now()
 
-	txt, err := time.MarshalJSON()
-	a.NilNow(err)
-	a.Equal(string(txt), wantTime)
+	a.LtNow(time.Since(now.Time), time.Microsecond)
 }
 
-func TestMarshalAndUnmarshalBinary(t *testing.T) {
+func TestDate(t *testing.T) {
 	a := assert.New(t)
-	testTime := Now()
-	wantTime := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	bin, _ := wantTime.MarshalBinary()
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 0).Time, time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC))
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 0, nil).Time, time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC))
 
-	err := testTime.UnmarshalBinary(bin)
-	a.NilNow(err)
-
-	testBin, err := testTime.MarshalBinary()
-	a.NilNow(err)
-	a.Equal(bin, testBin)
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 0, tzLA).Time, time.Date(2024, 1, 1, 0, 0, 0, 0, tzLA))
 }
 
-func TestGeoEncodeAndDecode(t *testing.T) {
+func TestTimeHour12(t *testing.T) {
 	a := assert.New(t)
-	testTime := Now()
-	wantTime := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	gob, _ := wantTime.GobEncode()
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 0).Hour12(), 12)
+	a.EqualNow(Date(2024, 1, 1, 1, 0, 0, 0).Hour12(), 1)
+	a.EqualNow(Date(2024, 1, 1, 12, 0, 0, 0).Hour12(), 12)
+	a.EqualNow(Date(2024, 1, 1, 13, 0, 0, 0).Hour12(), 1)
+}
 
-	err := testTime.GobDecode(gob)
-	a.NilNow(err)
+func TestMicrosecond(t *testing.T) {
+	a := assert.New(t)
 
-	testGob, err := testTime.GobEncode()
-	a.NilNow(err)
-	a.Equal(gob, testGob)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 900).Microsecond(), 0)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 9000).Microsecond(), 9)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 99000).Microsecond(), 99)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 999000).Microsecond(), 999)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 9999000).Microsecond(), 9999)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 99999000).Microsecond(), 99999)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 999999000).Microsecond(), 999999)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 9999999000).Microsecond(), 999999)
+}
+
+func TestMillisecond(t *testing.T) {
+	a := assert.New(t)
+
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 900).Millisecond(), 0)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 900000).Millisecond(), 0)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 9000000).Millisecond(), 9)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 99000000).Millisecond(), 99)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 999000000).Millisecond(), 999)
+	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 9999000000).Millisecond(), 999)
 }
