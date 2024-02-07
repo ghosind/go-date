@@ -231,14 +231,14 @@ func (t Time) formatByLayout(layout string, buf []byte) []byte {
 			buf = appendIntToBuffer(buf, t.Millisecond(), 3)
 		case layoutTokenPMUpper:
 			hour := t.Hour()
-			if hour > 12 {
+			if hour >= 12 {
 				buf = append(buf, "PM"...)
 			} else {
 				buf = append(buf, "AM"...)
 			}
 		case layoutTokenPMLower:
 			hour := t.Hour()
-			if hour > 12 {
+			if hour >= 12 {
 				buf = append(buf, "pm"...)
 			} else {
 				buf = append(buf, "am"...)
