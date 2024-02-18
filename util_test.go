@@ -23,3 +23,61 @@ func testAppendIntToBuffer(a *assert.Assertion, val, width int, expect string) {
 
 	a.Equal(string(buf), expect)
 }
+
+func TestLookup(t *testing.T) {
+	a := assert.New(t)
+
+	cases := []struct {
+		str      string
+		expected int
+	}{
+		{"Jan", 0},
+		{"JAN", 0},
+		{"jan", 0},
+		{"Apr", 3},
+		{"DecApr", 11},
+		{"DECAPR", 11},
+		{"TEST", -1},
+		{"T", -1},
+	}
+
+	for _, test := range cases {
+		i, _, err := lookup(abbrMonthNames, test.str)
+		if test.expected >= 0 {
+			a.NilNow(err)
+		} else {
+			a.NotNilNow(err)
+		}
+
+		a.EqualNow(i, test.expected)
+	}
+}
+
+func TestReadNum(t *testing.T) {
+	a := assert.New(t)
+
+	testReadNum(a, "1234", 12, 2, true, false)
+	testReadNum(a, "1234", 1234, 4, true, false)
+	testReadNum(a, "12", 12, 4, false, false)
+	testReadNum(a, "12", -1, 4, true, true)
+	testReadNum(a, "xx", -1, 2, true, true)
+}
+
+func testReadNum(
+	a *assert.Assertion,
+	value string,
+	expected, width int,
+	fixed bool,
+	hasError bool,
+) {
+	a.Helper()
+
+	i, s, err := readNum(value, width, fixed)
+	if hasError {
+		a.NotNilNow(err)
+		a.EqualNow(s, value)
+	} else {
+		a.NilNow(err)
+		a.EqualNow(i, expected)
+	}
+}
