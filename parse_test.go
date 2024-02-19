@@ -11,7 +11,7 @@ func TestParse(t *testing.T) {
 	a := assert.New(t)
 
 	cases := []struct {
-		expect *Time
+		expect Time
 		layout string
 		str    string
 	}{

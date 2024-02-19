@@ -55,7 +55,7 @@ func TestFormat(t *testing.T) {
 
 	layout := "YYYY YY MMMM MMM MM M DD D HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
 	cases := []struct {
-		tm     *Time
+		tm     Time
 		expect string
 	}{
 		{
@@ -93,7 +93,7 @@ func TestFormat(t *testing.T) {
 	}
 }
 
-func testFormat(a *assert.Assertion, time *Time, layout, expect string) {
+func testFormat(a *assert.Assertion, time Time, layout, expect string) {
 	a.Helper()
 
 	str := time.Format(layout)

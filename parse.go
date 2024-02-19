@@ -8,28 +8,28 @@ import (
 var errParse error = errors.New("parse error") // a temporary error for parse
 
 // Parse parses a formatted string with the layout and returns the time value it represents.
-func Parse(layout, value string) (*Time, error) {
+func Parse(layout, value string) (Time, error) {
 	return parse(layout, value, time.Local)
 }
 
 // ParseInLocation parses a formatted string with the layout and the given location, and returns
 // the time value it represents.
-func ParseInLocation(layout, value string, loc *time.Location) (*Time, error) {
+func ParseInLocation(layout, value string, loc *time.Location) (Time, error) {
 	return parse(layout, value, loc)
 }
 
 // ParseInLocationName tries to load the location with the given name, parses a formatted string
 // with the layout and the location, and returns the time value it represents.
-func ParseInLocationName(layout, value, name string) (*Time, error) {
+func ParseInLocationName(layout, value, name string) (Time, error) {
 	loc, err := time.LoadLocation(name)
 	if err != nil {
-		return nil, err
+		return Time{}, err
 	}
 
 	return parse(layout, value, loc)
 }
 
-func parse(layout, value string, loc *time.Location) (*Time, error) {
+func parse(layout, value string, loc *time.Location) (Time, error) {
 	oLayout, oValue := layout, value
 	am := false
 	pm := false
@@ -119,7 +119,7 @@ func parse(layout, value string, loc *time.Location) (*Time, error) {
 			nsec, value, err = readNum(value, 3, true)
 		case layoutTokenPMUpper:
 			if len(value) < 2 {
-				return nil, newParseError(oLayout, oValue, s, value)
+				return Time{}, newParseError(oLayout, oValue, s, value)
 			}
 			str, value = value[0:2], value[2:]
 			switch str {
@@ -128,11 +128,11 @@ func parse(layout, value string, loc *time.Location) (*Time, error) {
 			case "PM":
 				pm = true
 			default:
-				return nil, newParseError(oLayout, oValue, s, str)
+				return Time{}, newParseError(oLayout, oValue, s, str)
 			}
 		case layoutTokenPMLower:
 			if len(value) < 2 {
-				return nil, newParseError(oLayout, oValue, s, value)
+				return Time{}, newParseError(oLayout, oValue, s, value)
 			}
 			str, value = value[0:2], value[2:]
 			switch str {
@@ -141,11 +141,11 @@ func parse(layout, value string, loc *time.Location) (*Time, error) {
 			case "pm":
 				pm = true
 			default:
-				return nil, newParseError(oLayout, oValue, s, str)
+				return Time{}, newParseError(oLayout, oValue, s, str)
 			}
 		case layoutTokenTZ:
 			if len(value) < 5 {
-				return nil, newParseError(oLayout, oValue, s, value)
+				return Time{}, newParseError(oLayout, oValue, s, value)
 			}
 			var tzHr, tzMm int
 			tzHr, _, err = readNum(value[1:3], 2, true)
@@ -158,13 +158,13 @@ func parse(layout, value string, loc *time.Location) (*Time, error) {
 			case '-':
 				tzOffset = -tzOffset
 			default:
-				return nil, newParseError(oLayout, oValue, s, value[0:5])
+				return Time{}, newParseError(oLayout, oValue, s, value[0:5])
 			}
 
 			value = value[5:]
 		case layoutTokenTZColon:
 			if len(value) < 6 {
-				return nil, newParseError(oLayout, oValue, s, value)
+				return Time{}, newParseError(oLayout, oValue, s, value)
 			}
 			var tzHr, tzMm int
 			tzHr, _, err = readNum(value[1:3], 2, true)
@@ -177,22 +177,22 @@ func parse(layout, value string, loc *time.Location) (*Time, error) {
 			case '-':
 				tzOffset = -tzOffset
 			default:
-				return nil, newParseError(oLayout, oValue, s, value[0:6])
+				return Time{}, newParseError(oLayout, oValue, s, value[0:6])
 			}
 
 			value = value[6:]
 		case layoutTokenNone:
 			if len(value) < len(s) {
-				return nil, newParseError(oLayout, oValue, s, value)
+				return Time{}, newParseError(oLayout, oValue, s, value)
 			}
 			str, value = value[0:len(s)], value[len(s):]
 			if s != str {
-				return nil, newParseError(oLayout, oValue, s, str)
+				return Time{}, newParseError(oLayout, oValue, s, str)
 			}
 		}
 
 		if err != nil {
-			return nil, newParseError(oLayout, oValue, s, value)
+			return Time{}, newParseError(oLayout, oValue, s, value)
 		}
 	}
 
@@ -205,9 +205,9 @@ func parse(layout, value string, loc *time.Location) (*Time, error) {
 	nsec *= int(time.Millisecond)
 
 	if tzOffset == -1 {
-		return Date(year, month, day, hour, min, sec, nsec, loc), nil
+		return Date(year, time.Month(month), day, hour, min, sec, nsec, loc), nil
 	} else {
-		tm := Date(year, month, day, hour, min, sec, nsec, time.UTC)
+		tm := Date(year, time.Month(month), day, hour, min, sec, nsec, time.UTC)
 		tm.Time = tm.Add(time.Duration(tzOffset) * time.Minute)
 
 		return tm, nil
