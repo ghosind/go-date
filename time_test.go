@@ -33,6 +33,30 @@ func TestNow(t *testing.T) {
 	a.LtNow(time.Since(now.Time), time.Microsecond)
 }
 
+func TestUnix(t *testing.T) {
+	a := assert.New(t)
+
+	unixTime := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	tm := Unix(unixTime.Unix(), 0)
+	a.TrueNow(tm.Equal(unixTime.Time))
+}
+
+func TestUnixMicro(t *testing.T) {
+	a := assert.New(t)
+
+	unixTime := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	tm := UnixMicro(unixTime.UnixMicro())
+	a.TrueNow(tm.Equal(unixTime.Time))
+}
+
+func TestUnixMilli(t *testing.T) {
+	a := assert.New(t)
+
+	unixTime := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	tm := UnixMilli(unixTime.UnixMilli())
+	a.TrueNow(tm.Equal(unixTime.Time))
+}
+
 func TestEqual(t *testing.T) {
 	a := assert.New(t)
 	tzLA, _ := time.LoadLocation("America/Los_Angeles")

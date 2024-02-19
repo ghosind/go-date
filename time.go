@@ -41,6 +41,29 @@ func Now() Time {
 	return New()
 }
 
+// Unix returns the local Time corresponding to the given Unix time, sec seconds and nsec
+// nanoseconds since January 1, 1970 UTC. It is valid to pass nsec outside the range
+// [0, 999999999]. Not all sec values have a corresponding time value. One such value is 1<<63-1
+// (the largest int64 value).
+func Unix(sec, nsec int64) Time {
+	tm := time.Unix(sec, nsec)
+	return New(tm)
+}
+
+// UnixMicro returns the local Time corresponding to the given Unix time, usec microseconds since
+// January 1, 1970 UTC.
+func UnixMicro(usec int64) Time {
+	tm := time.UnixMicro(usec)
+	return New(tm)
+}
+
+// UnixMilli returns the local Time corresponding to the given Unix time, msec milliseconds since
+// January 1, 1970 UTC.
+func UnixMilli(msec int64) Time {
+	tm := time.UnixMilli(msec)
+	return New(tm)
+}
+
 // Equal reports whether t and u represent the same time instant. Two times can be equal even if
 // they are in different locations. For example, 6:00 +0200 and 4:00 UTC are Equal.
 func (t Time) Equal(u any) bool {
