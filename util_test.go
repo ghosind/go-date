@@ -2,9 +2,20 @@ package date
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ghosind/go-assert"
 )
+
+func TestGetTime(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	a.Equal(getTime(tm), tm.Time)
+	a.Equal(getTime(tm.Time), tm.Time)
+	a.PanicOfNow(func() { getTime(1) }, ErrNotTime)
+}
 
 func TestAppendIntToBuffer(t *testing.T) {
 	a := assert.New(t)

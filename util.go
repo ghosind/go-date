@@ -3,7 +3,19 @@ package date
 import (
 	"strconv"
 	"strings"
+	"time"
 )
+
+// getTime tries to get a Time instance, and panics if the object is not a Time.
+func getTime(t any) time.Time {
+	if ut, ok := t.(Time); ok {
+		return ut.Time
+	} else if ut, ok := t.(time.Time); ok {
+		return ut
+	} else {
+		panic(ErrNotTime)
+	}
+}
 
 // appendIntToBuffer converts the integer value to a textual representation string, and padding
 // with '0' if the length is less than the minimum width requirement.
