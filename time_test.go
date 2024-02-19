@@ -33,6 +33,30 @@ func TestNow(t *testing.T) {
 	a.LtNow(time.Since(now.Time), time.Microsecond)
 }
 
+func TestEqual(t *testing.T) {
+	a := assert.New(t)
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).
+		Equal(Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)))
+	a.NotTrueNow(Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).
+		Equal(Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)))
+	a.NotTrueNow(Date(2024, time.January, 1, 0, 0, 0, 0, tzLA).
+		Equal(Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)))
+
+	a.TrueNow(Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).
+		Equal(time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)))
+	a.NotTrueNow(Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).
+		Equal(time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)))
+	a.NotTrueNow(Date(2024, time.January, 1, 0, 0, 0, 0, tzLA).
+		Equal(time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)))
+
+	a.TrueNow(Date(2024, time.January, 1, 8, 0, 0, 0, time.UTC).
+		Equal(Date(2024, time.January, 1, 0, 0, 0, 0, tzLA)))
+
+	a.PanicOfNow(func() { Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).Equal(1) }, ErrNotTime)
+}
+
 func TestTimeHour12(t *testing.T) {
 	a := assert.New(t)
 

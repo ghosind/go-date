@@ -41,6 +41,21 @@ func Now() Time {
 	return New()
 }
 
+// Equal reports whether t and u represent the same time instant. Two times can be equal even if
+// they are in different locations. For example, 6:00 +0200 and 4:00 UTC are Equal.
+func (t Time) Equal(u any) bool {
+	var tm time.Time
+	if ut, ok := u.(Time); ok {
+		tm = ut.Time
+	} else if ut, ok := u.(time.Time); ok {
+		tm = ut
+	} else {
+		panic(ErrNotTime)
+	}
+
+	return t.Time.Equal(tm)
+}
+
 // Hour12 returns the 12-hours clock hour offset within the day specified by the time, in the
 // range [1, 12]. See https://en.wikipedia.org/wiki/12-hour_clock for more details about the
 // value.

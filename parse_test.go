@@ -52,7 +52,7 @@ func TestParse(t *testing.T) {
 		tm, err := Parse(test.layout, test.str)
 		a.NilNow(err)
 		a.NotNilNow(tm)
-		a.EqualNow(tm.Time, test.expect.Time)
+		a.TrueNow(tm.Equal(test.expect.Time))
 	}
 }
 
@@ -97,15 +97,15 @@ func TestParseInLocation(t *testing.T) {
 
 	tm, err := ParseInLocation("YYYY-MM-DD", "2024-01-01", time.UTC)
 	a.NilNow(err)
-	a.EqualNow(tm.Time, time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC))
+	a.TrueNow(tm.Equal(time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)))
 
 	tm, err = ParseInLocation("YYYY-MM-DD", "2024-01-01", tzLA)
 	a.NilNow(err)
-	a.EqualNow(tm.Time, time.Date(2024, 1, 1, 0, 0, 0, 0, tzLA))
+	a.TrueNow(tm.Equal(time.Date(2024, 1, 1, 0, 0, 0, 0, tzLA)))
 
 	tm, err = ParseInLocation("YYYY-MM-DD", "2024-01-01", tzSH)
 	a.NilNow(err)
-	a.EqualNow(tm.Time, time.Date(2024, 1, 1, 0, 0, 0, 0, tzSH))
+	a.TrueNow(tm.Equal(time.Date(2024, 1, 1, 0, 0, 0, 0, tzSH)))
 }
 
 func TestParseInLocationName(t *testing.T) {
@@ -116,24 +116,15 @@ func TestParseInLocationName(t *testing.T) {
 
 	tm, err := ParseInLocationName("YYYY-MM-DD", "2024-01-01", "UTC")
 	a.NilNow(err)
-	a.EqualNow(
-		tm.Format("YYYY-MM-DD HH:mm:ss ZZ"),
-		time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Format("2006-01-02 15:04:05 -0700"),
-	)
+	a.TrueNow(tm.Equal(time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC)))
 
 	tm, err = ParseInLocationName("YYYY-MM-DD", "2024-01-01", "America/Los_Angeles")
 	a.NilNow(err)
-	a.EqualNow(
-		tm.Format("YYYY-MM-DD HH:mm:ss ZZ"),
-		time.Date(2024, 1, 1, 0, 0, 0, 0, tzLA).Format("2006-01-02 15:04:05 -0700"),
-	)
+	a.TrueNow(tm.Equal(time.Date(2024, 1, 1, 0, 0, 0, 0, tzLA)))
 
 	tm, err = ParseInLocationName("YYYY-MM-DD", "2024-01-01", "Asia/Shanghai")
 	a.NilNow(err)
-	a.EqualNow(
-		tm.Format("YYYY-MM-DD HH:mm:ss ZZ"),
-		time.Date(2024, 1, 1, 0, 0, 0, 0, tzSH).Format("2006-01-02 15:04:05 -0700"),
-	)
+	a.TrueNow(tm.Equal(time.Date(2024, 1, 1, 0, 0, 0, 0, tzSH)))
 
 	_, err = ParseInLocationName("YYYY-MM-DD", "2024-01-01", "Unknown")
 	a.NotNilNow(err)

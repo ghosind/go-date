@@ -1,5 +1,11 @@
 package date
 
+import "errors"
+
+var (
+	ErrNotTime error = errors.New("not a Time")
+)
+
 // ParseError is the error that happens when parsing the time string by the layout.
 type ParseError struct {
 	Layout     string
