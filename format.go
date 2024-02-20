@@ -167,6 +167,13 @@ func nextLayoutToken(layout string) (int, string, string) {
 	return layoutTokenNone, layout[0:1], layout[1:]
 }
 
+// AppendFormat is like Format but appends the textual representation to b and returns the extended
+// buffer.
+func (t Time) AppendFormat(b []byte, layout string) []byte {
+	buf := t.formatByLayout(layout, b)
+	return buf
+}
+
 // Format returns a string of the time formatted by the layout from the parameter.
 func (t Time) Format(layout string) string {
 	buf := make([]byte, 0, 64)
@@ -178,7 +185,7 @@ func (t Time) Format(layout string) string {
 // formatByLayout appends the string of the time formatted by the layout into the buffer, and
 // returns the reference of the buffer.
 func (t Time) formatByLayout(layout string, buf []byte) []byte {
-	for len(layout) > 0 {
+	for {
 		token, str, suffix := nextLayoutToken(layout)
 		layout = suffix
 		if token == layoutTokenEnd {

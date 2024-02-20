@@ -47,6 +47,15 @@ func TestNextLayoutToken(t *testing.T) {
 	a.EqualNow(layout, "")
 }
 
+func TestAppendFormat(t *testing.T) {
+	a := assert.New(t)
+	text := []byte("Time: ")
+	tm := Date(2024, time.January, 1, 12, 30, 15, 0)
+
+	text = tm.AppendFormat(text, "YYYY-MM-DD HH:mm:ss")
+	a.EqualNow(string(text), "Time: 2024-01-01 12:30:15")
+}
+
 func TestFormat(t *testing.T) {
 	a := assert.New(t)
 

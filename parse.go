@@ -208,7 +208,7 @@ func parse(layout, value string, loc *time.Location) (Time, error) {
 		return Date(year, time.Month(month), day, hour, min, sec, nsec, loc), nil
 	} else {
 		tm := Date(year, time.Month(month), day, hour, min, sec, nsec, time.UTC)
-		tm.Time = tm.Add(time.Duration(tzOffset) * time.Minute)
+		tm = tm.Add(time.Duration(tzOffset) * time.Minute)
 
 		return tm, nil
 	}

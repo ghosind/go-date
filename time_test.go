@@ -57,6 +57,149 @@ func TestUnixMilli(t *testing.T) {
 	a.TrueNow(tm.Equal(unixTime.Time))
 }
 
+func TestSince(t *testing.T) {
+	a := assert.New(t)
+
+	tm := time.Now().Add(-time.Minute)
+
+	dur := Since(tm)
+	a.GteNow(dur, time.Minute)
+	a.LteNow(dur, time.Minute+time.Millisecond)
+
+	dur = Since(New(tm))
+	a.GteNow(dur, time.Minute)
+	a.LteNow(dur, time.Minute+time.Millisecond)
+}
+
+func TestUntil(t *testing.T) {
+	a := assert.New(t)
+
+	tm := time.Now().Add(time.Minute)
+
+	dur := Until(tm)
+	a.LteNow(dur, time.Minute)
+	a.GteNow(dur, time.Minute-time.Millisecond)
+
+	dur = Until(New(tm))
+	a.LteNow(dur, time.Minute)
+	a.GteNow(dur, time.Minute-time.Millisecond)
+}
+
+func TestAdd(t *testing.T) {
+	a := assert.New(t)
+
+	now := Now()
+	tm := now.Add(time.Minute)
+	a.EqualNow(tm.Sub(now), time.Minute)
+}
+
+func TestSub(t *testing.T) {
+	a := assert.New(t)
+
+	now := time.Now()
+	tm := New(now).Add(time.Minute)
+
+	a.Equal(tm.Sub(now), time.Minute)
+	a.Equal(tm.Sub(New(now)), time.Minute)
+}
+
+func TestRound(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(0, 0, 0, 12, 15, 30, 918273645, time.UTC)
+	cases := []struct {
+		dur    time.Duration
+		expect Time
+	}{
+		{time.Nanosecond, Date(0, 0, 0, 12, 15, 30, 918273645, time.UTC)},
+		{time.Microsecond, Date(0, 0, 0, 12, 15, 30, 918274000, time.UTC)},
+		{time.Millisecond, Date(0, 0, 0, 12, 15, 30, 918000000, time.UTC)},
+		{time.Second, Date(0, 0, 0, 12, 15, 31, 0, time.UTC)},
+		{2 * time.Second, Date(0, 0, 0, 12, 15, 30, 0, time.UTC)},
+		{time.Minute, Date(0, 0, 0, 12, 16, 0, 0, time.UTC)},
+		{10 * time.Minute, Date(0, 0, 0, 12, 20, 0, 0, time.UTC)},
+		{time.Hour, Date(0, 0, 0, 12, 0, 0, 0, time.UTC)},
+	}
+
+	for _, test := range cases {
+		a.TrueNow(tm.Round(test.dur).Equal(test.expect))
+	}
+}
+
+func TestTruncate(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(0, 0, 0, 12, 15, 30, 918273645, time.UTC)
+	cases := []struct {
+		dur    time.Duration
+		expect Time
+	}{
+		{time.Nanosecond, Date(0, 0, 0, 12, 15, 30, 918273645, time.UTC)},
+		{time.Microsecond, Date(0, 0, 0, 12, 15, 30, 918273000, time.UTC)},
+		{time.Millisecond, Date(0, 0, 0, 12, 15, 30, 918000000, time.UTC)},
+		{time.Second, Date(0, 0, 0, 12, 15, 30, 0, time.UTC)},
+		{2 * time.Second, Date(0, 0, 0, 12, 15, 30, 0, time.UTC)},
+		{time.Minute, Date(0, 0, 0, 12, 15, 0, 0, time.UTC)},
+		{10 * time.Minute, Date(0, 0, 0, 12, 10, 0, 0, time.UTC)},
+		{time.Hour, Date(0, 0, 0, 12, 0, 0, 0, time.UTC)},
+	}
+
+	for _, test := range cases {
+		a.TrueNow(tm.Truncate(test.dur).Equal(test.expect))
+	}
+}
+
+func TestAddDate(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(2024, time.January, 1, 12, 30, 30, 0, time.UTC)
+	expect := Date(2025, time.February, 15, 12, 30, 30, 0, time.UTC)
+
+	a.TrueNow(tm.AddDate(1, 1, 14).Equal(expect))
+}
+
+func TestAfter(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	after := Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+	before := Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	a.TrueNow(tm.After(before))
+	a.TrueNow(tm.After(before.Time))
+	a.NotTrueNow(tm.After(after))
+	a.NotTrueNow(tm.After(after.Time))
+}
+
+func TestBefore(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	after := Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+	before := Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	a.TrueNow(tm.Before(after))
+	a.TrueNow(tm.Before(after.Time))
+	a.NotTrueNow(tm.Before(before))
+	a.NotTrueNow(tm.Before(before.Time))
+}
+
+func TestCompare(t *testing.T) {
+	a := assert.New(t)
+
+	tm := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	equal := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	after := Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+	before := Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	a.EqualNow(tm.Compare(equal), 0)
+	a.EqualNow(tm.Compare(equal.Time), 0)
+	a.EqualNow(tm.Compare(after), -1)
+	a.EqualNow(tm.Compare(after.Time), -1)
+	a.EqualNow(tm.Compare(before), 1)
+	a.EqualNow(tm.Compare(before.Time), 1)
+}
+
 func TestEqual(t *testing.T) {
 	a := assert.New(t)
 	tzLA, _ := time.LoadLocation("America/Los_Angeles")
@@ -112,4 +255,39 @@ func TestMillisecond(t *testing.T) {
 	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 99000000).Millisecond(), 99)
 	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 999000000).Millisecond(), 999)
 	a.EqualNow(Date(2024, 1, 1, 0, 0, 0, 9999000000).Millisecond(), 999)
+}
+
+func TestIn(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	utc := Date(2024, time.January, 1, 8, 0, 0, 0, time.UTC)
+	tm := utc.In(tzLA)
+
+	a.TrueNow(tm.Equal(utc))
+	a.EqualNow(utc.Format("YYYY-MM-DD HH:mm:ss Z"), "2024-01-01 08:00:00 +00:00")
+	a.EqualNow(tm.Format("YYYY-MM-DD HH:mm:ss Z"), "2024-01-01 00:00:00 -08:00")
+}
+
+func TestLocal(t *testing.T) {
+	a := assert.New(t)
+
+	utc := Date(2024, time.January, 1, 0, 0, 0, 0)
+	tm := utc.Local()
+
+	a.TrueNow(tm.Equal(utc))
+}
+
+func TestUTC(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	tm := Date(2024, time.January, 1, 0, 0, 0, 0, tzLA)
+	utc := tm.UTC()
+
+	a.TrueNow(tm.Equal(utc))
+	a.EqualNow(utc.Format("YYYY-MM-DD HH:mm:ss Z"), "2024-01-01 08:00:00 +00:00")
+	a.EqualNow(tm.Format("YYYY-MM-DD HH:mm:ss Z"), "2024-01-01 00:00:00 -08:00")
 }
