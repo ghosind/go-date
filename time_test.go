@@ -291,3 +291,12 @@ func TestUTC(t *testing.T) {
 	a.EqualNow(utc.Format("YYYY-MM-DD HH:mm:ss Z"), "2024-01-01 08:00:00 +00:00")
 	a.EqualNow(tm.Format("YYYY-MM-DD HH:mm:ss Z"), "2024-01-01 00:00:00 -08:00")
 }
+
+func TestZoneBounds(t *testing.T) {
+	a := assert.New(t)
+
+	expectedStart, expectedEnd := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).ZoneBounds()
+	start, end := Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC).ZoneBounds()
+	a.TrueNow(start.Equal(expectedStart))
+	a.TrueNow(end.Equal(expectedEnd))
+}

@@ -193,3 +193,12 @@ func (t Time) UTC() Time {
 	t.Time = t.Time.UTC()
 	return t
 }
+
+// ZoneBounds returns the bounds of the time zone in effect at time t. The zone begins at start and
+// the next zone begins at end. If the zone begins at the beginning of time, start will be returned
+// as a zero Time. If the zone goes on forever, end will be returned as a zero Time. The Location
+// of the returned times will be the same as t.
+func (t Time) ZoneBounds() (Time, Time) {
+	startTm, endTm := t.Time.ZoneBounds()
+	return New(startTm), New(endTm)
+}
