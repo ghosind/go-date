@@ -1,6 +1,42 @@
 # Date
 
-The extends of the built-in `time` package.
+![test](https://github.com/ghosind/go-date/workflows/test/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ghosind/go-date)](https://goreportcard.com/report/github.com/ghosind/go-date)
+[![codecov](https://codecov.io/gh/ghosind/go-date/branch/main/graph/badge.svg)](https://codecov.io/gh/ghosind/go-date)
+![Version Badge](https://img.shields.io/github/v/release/ghosind/go-date)
+![License Badge](https://img.shields.io/github/license/ghosind/go-date)
+[![Go Reference](https://pkg.go.dev/badge/github.com/ghosind/go-date.svg)](https://pkg.go.dev/github.com/ghosind/go-date)
+
+The extends of the Golang built-in `time` package.
+
+## Installation
+
+Run the following command to install the library, which requires Go 1.20 and later versions.
+
+```sh
+go get -u github.com/ghosind/go-date
+```
+
+## Getting Started
+
+This library overwrites the built-in format layouts, the following example is a simple implementation of parsing a string:
+
+```go
+str := "2024-01-10 23:59:30"
+layout := "YYYY-MM-DD HH:mm:ss"
+tm, err := date.Parse(layout, str)
+if err != nil {
+  // handle error
+}
+fmt.Print(tm) // 2024-01-10 23:59:30 +0000 CST
+```
+
+You can also use the `Format` method to format the `Time` to a string:
+
+```go
+tm := Date(2024, time.January, 1, 23, 59, 30, 0)
+fmt.Print(fm.Format("YYYY-MM-DD HH:mm:ss")) // 2024-01-10 23:59:30
+```
 
 ## Available Formats
 
