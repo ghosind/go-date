@@ -202,3 +202,18 @@ func (t Time) ZoneBounds() (Time, Time) {
 	startTm, endTm := t.Time.ZoneBounds()
 	return New(startTm), New(endTm)
 }
+
+func (t Time) StartOfYear() Time {
+	tm := Date(t.Year(), 1, 1, 0, 0, 0, 0, t.Location())
+	return tm
+}
+
+func (t Time) StartOfMonth() Time {
+	tm := Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, t.Location())
+	return tm
+}
+
+func (t Time) StartOfDay() Time {
+	tm := Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+	return tm
+}

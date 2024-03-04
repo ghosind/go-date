@@ -300,3 +300,42 @@ func TestZoneBounds(t *testing.T) {
 	a.TrueNow(start.Equal(expectedStart))
 	a.TrueNow(end.Equal(expectedEnd))
 }
+
+func TestStartOfYear(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0).
+		StartOfYear().
+		Equal(Date(2006, 1, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0, tzLA).
+		StartOfYear().
+		Equal(Date(2006, 1, 1, 0, 0, 0, 0, tzLA)))
+}
+
+func TestStartOfMonth(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0).
+		StartOfMonth().
+		Equal(Date(2006, 2, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0, tzLA).
+		StartOfMonth().
+		Equal(Date(2006, 2, 1, 0, 0, 0, 0, tzLA)))
+}
+
+func TestStartOfDay(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0).
+		StartOfDay().
+		Equal(Date(2006, 2, 2, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0, tzLA).
+		StartOfDay().
+		Equal(Date(2006, 2, 2, 0, 0, 0, 0, tzLA)))
+}
