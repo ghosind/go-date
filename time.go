@@ -203,17 +203,53 @@ func (t Time) ZoneBounds() (Time, Time) {
 	return New(startTm), New(endTm)
 }
 
+// StartOfYear returns the start time of the year.
 func (t Time) StartOfYear() Time {
 	tm := Date(t.Year(), 1, 1, 0, 0, 0, 0, t.Location())
 	return tm
 }
 
+// StartOfYear returns the start time of the half year.
+func (t Time) StartOfHalfYear() Time {
+	month := t.Month()
+	month = month - (month-1)%6
+	return Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location())
+}
+
+// StartOfYear returns the start time of the quarter.
+func (t Time) StartOfQuarter() Time {
+	month := t.Month()
+	month = month - (month-1)%3
+	return Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location())
+}
+
+// StartOfMonth returns the start time of the month.
 func (t Time) StartOfMonth() Time {
-	tm := Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, t.Location())
+	y, m, _ := t.Date()
+	tm := Date(y, m, 1, 0, 0, 0, 0, t.Location())
 	return tm
 }
 
+// StartOfDay returns the start time of the day.
 func (t Time) StartOfDay() Time {
-	tm := Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+	y, m, d := t.Date()
+	tm := Date(y, m, d, 0, 0, 0, 0, t.Location())
 	return tm
+}
+
+// StartOfHour returns the start time of the hour.
+func (t Time) StartOfHour() Time {
+	y, m, d := t.Date()
+	tm := Date(y, m, d, t.Hour(), 0, 0, 0, t.Location())
+	return tm
+}
+
+// StartOfMinute returns the start time of the minute.
+func (t Time) StartOfMinute() Time {
+	return t.Truncate(time.Minute)
+}
+
+// StartOfSecond returns the start time of the second.
+func (t Time) StartOfSecond() Time {
+	return t.Truncate(time.Second)
 }

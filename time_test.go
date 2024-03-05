@@ -314,6 +314,40 @@ func TestStartOfYear(t *testing.T) {
 		Equal(Date(2006, 1, 1, 0, 0, 0, 0, tzLA)))
 }
 
+func TestStartOfHalfYear(t *testing.T) {
+	a := assert.New(t)
+
+	a.TrueNow(Date(2006, 1, 3, 15, 4, 5, 0).
+		StartOfHalfYear().
+		Equal(Date(2006, 1, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 2, 3, 15, 4, 5, 0).
+		StartOfHalfYear().
+		Equal(Date(2006, 1, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 7, 3, 15, 4, 5, 0).
+		StartOfHalfYear().
+		Equal(Date(2006, 7, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 12, 3, 15, 4, 5, 0).
+		StartOfHalfYear().
+		Equal(Date(2006, 7, 1, 0, 0, 0, 0)))
+}
+
+func TestStartOfQuarter(t *testing.T) {
+	a := assert.New(t)
+
+	a.TrueNow(Date(2006, 1, 15, 12, 30, 30, 999).
+		StartOfQuarter().
+		Equal(Date(2006, 1, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 2, 15, 12, 30, 30, 999).
+		StartOfQuarter().
+		Equal(Date(2006, 1, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 4, 15, 12, 30, 30, 999).
+		StartOfQuarter().
+		Equal(Date(2006, 4, 1, 0, 0, 0, 0)))
+	a.TrueNow(Date(2006, 12, 15, 12, 30, 30, 999).
+		StartOfQuarter().
+		Equal(Date(2006, 10, 1, 0, 0, 0, 0)))
+}
+
 func TestStartOfMonth(t *testing.T) {
 	a := assert.New(t)
 
@@ -338,4 +372,43 @@ func TestStartOfDay(t *testing.T) {
 	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0, tzLA).
 		StartOfDay().
 		Equal(Date(2006, 2, 2, 0, 0, 0, 0, tzLA)))
+}
+
+func TestStartOfHour(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 3, 15, 4, 5, 999).
+		StartOfHour().
+		Equal(Date(2006, 2, 3, 15, 0, 0, 0)))
+	a.TrueNow(Date(2006, 2, 3, 15, 4, 5, 999, tzLA).
+		StartOfHour().
+		Equal(Date(2006, 2, 3, 15, 0, 0, 0, tzLA)))
+}
+
+func TestStartOfMinute(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999).
+		StartOfMinute().
+		Equal(Date(2006, 2, 3, 15, 30, 0, 0)))
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999, tzLA).
+		StartOfMinute().
+		Equal(Date(2006, 2, 3, 15, 30, 0, 0, tzLA)))
+}
+
+func TestStartOfSecond(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999).
+		StartOfSecond().
+		Equal(Date(2006, 2, 3, 15, 30, 55, 0)))
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999, tzLA).
+		StartOfSecond().
+		Equal(Date(2006, 2, 3, 15, 30, 55, 0, tzLA)))
 }
