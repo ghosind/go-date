@@ -47,6 +47,38 @@ func TestNextLayoutToken(t *testing.T) {
 	a.EqualNow(layout, "")
 }
 
+func TestNextLayoutTokenWithBuiltinLayout(t *testing.T) {
+	a := assert.New(t)
+	layout := "2006 06 January Jan 01 1 02 2 15 03 3 04 4 05 5 PM"
+	expectedTokens := []int{
+		layoutTokenYearLong, layoutTokenNone,
+		layoutTokenYear, layoutTokenNone,
+		layoutTokenMonthFull, layoutTokenNone,
+		layoutTokenMonthAbbr, layoutTokenNone,
+		layoutTokenMonthLong, layoutTokenNone,
+		layoutTokenMonth, layoutTokenNone,
+		layoutTokenDayLong, layoutTokenNone,
+		layoutTokenDay, layoutTokenNone,
+		layoutTokenHourLong, layoutTokenNone,
+		layoutTokenHour12Long, layoutTokenNone,
+		layoutTokenHour12, layoutTokenNone,
+		layoutTokenMinuteLong, layoutTokenNone,
+		layoutTokenMinute, layoutTokenNone,
+		layoutTokenSecondLong, layoutTokenNone,
+		layoutTokenSecond, layoutTokenNone,
+		layoutTokenPMUpper,
+		layoutTokenEnd,
+	}
+
+	for _, expected := range expectedTokens {
+		token, _, suffix := nextLayoutToken(layout)
+		layout = suffix
+		a.EqualNow(token, expected)
+	}
+
+	a.EqualNow(layout, "")
+}
+
 func TestAppendFormat(t *testing.T) {
 	a := assert.New(t)
 	text := []byte("Time: ")

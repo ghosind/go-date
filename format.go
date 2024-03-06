@@ -158,10 +158,60 @@ func nextLayoutToken(layout string) (int, string, string) {
 		} else {
 			return layoutTokenTZColon, layout[0:1], layout[1:]
 		}
+	case 'P':
+		if strings.HasPrefix(layout, "PM") {
+			return layoutTokenPMUpper, layout[0:2], layout[2:]
+		}
+	case 'J':
+		if strings.HasPrefix(layout, "Jan") {
+			if strings.HasPrefix(layout, "January") {
+				return layoutTokenMonthFull, layout[0:7], layout[7:]
+			} else {
+				return layoutTokenMonthAbbr, layout[0:3], layout[3:]
+			}
+		}
 	case '\\': // Escape next character
 		if len(layout) >= 2 {
 			return layoutTokenNone, layout[1:2], layout[2:]
 		}
+	case '0':
+		if len(layout) < 2 {
+			break
+		}
+		token := layoutTokenNone
+		switch layout[1] {
+		case '1':
+			token = layoutTokenMonthLong
+		case '2':
+			token = layoutTokenDayLong
+		case '3':
+			token = layoutTokenHour12Long
+		case '4':
+			token = layoutTokenMinuteLong
+		case '5':
+			token = layoutTokenSecondLong
+		case '6':
+			token = layoutTokenYear
+		}
+		if token != layoutTokenNone {
+			return token, layout[0:2], layout[2:]
+		}
+	case '1':
+		if len(layout) >= 2 && layout[1] == '5' {
+			return layoutTokenHourLong, layout[0:2], layout[2:]
+		}
+		return layoutTokenMonth, layout[0:1], layout[1:]
+	case '2':
+		if strings.HasPrefix(layout, "2006") {
+			return layoutTokenYearLong, layout[0:4], layout[4:]
+		}
+		return layoutTokenDay, layout[0:1], layout[1:]
+	case '3':
+		return layoutTokenHour12, layout[0:1], layout[1:]
+	case '4':
+		return layoutTokenMinute, layout[0:1], layout[1:]
+	case '5':
+		return layoutTokenSecond, layout[0:1], layout[1:]
 	}
 
 	return layoutTokenNone, layout[0:1], layout[1:]
