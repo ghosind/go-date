@@ -209,18 +209,20 @@ func (t Time) StartOfYear() Time {
 	return tm
 }
 
-// StartOfYear returns the start time of the half year.
+// StartOfHalfYear returns the start time of the half year.
 func (t Time) StartOfHalfYear() Time {
 	month := t.Month()
 	month = month - (month-1)%6
-	return Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location())
+	tm := Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location())
+	return tm
 }
 
-// StartOfYear returns the start time of the quarter.
+// StartOfQuarter returns the start time of the quarter.
 func (t Time) StartOfQuarter() Time {
 	month := t.Month()
 	month = month - (month-1)%3
-	return Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location())
+	tm := Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location())
+	return tm
 }
 
 // StartOfMonth returns the start time of the month.
@@ -246,10 +248,71 @@ func (t Time) StartOfHour() Time {
 
 // StartOfMinute returns the start time of the minute.
 func (t Time) StartOfMinute() Time {
-	return t.Truncate(time.Minute)
+	tm := t.Truncate(time.Minute)
+	return tm
 }
 
 // StartOfSecond returns the start time of the second.
 func (t Time) StartOfSecond() Time {
-	return t.Truncate(time.Second)
+	tm := t.Truncate(time.Second)
+	return tm
+}
+
+// EndOfYear returns the end time of the year.
+func (t Time) EndOfYear() Time {
+	tm := Date(t.Year()+1, 1, 1, 0, 0, 0, 0, t.Location()).Add(-time.Nanosecond)
+	return tm
+}
+
+// EndOfHalfYear returns the end time of the half year.
+func (t Time) EndOfHalfYear() Time {
+	month := t.Month()
+	month = month - (month-1)%6 + 6
+	tm := Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location()).Add(-time.Nanosecond)
+	return tm
+}
+
+// EndOfQuarter returns the end time of the quarter.
+func (t Time) EndOfQuarter() Time {
+	month := t.Month()
+	month = month - (month-1)%3 + 3
+	tm := Date(t.Year(), month, 1, 0, 0, 0, 0, t.Location()).Add(-time.Nanosecond)
+	return tm
+}
+
+// EndOfMonth returns the end time of the month.
+func (t Time) EndOfMonth() Time {
+	y, m, _ := t.Date()
+	tm := Date(y, m+1, 1, 0, 0, 0, 0, t.Location()).Add(-time.Nanosecond)
+	return tm
+}
+
+// EndOfDay returns the end time of the day.
+func (t Time) EndOfDay() Time {
+	y, m, d := t.Date()
+	tm := Date(y, m, d, 23, 59, 59, 999999999, t.Location())
+	return tm
+}
+
+// EndOfHour returns the end time of the hour.
+func (t Time) EndOfHour() Time {
+	y, m, d := t.Date()
+	tm := Date(y, m, d, t.Hour(), 59, 59, 999999999, t.Location())
+	return tm
+}
+
+// EndOfMinute returns the end time of the minute.
+func (t Time) EndOfMinute() Time {
+	y, m, d := t.Date()
+	h, mm, _ := t.Clock()
+	tm := Date(y, m, d, h, mm, 59, 999999999, t.Location())
+	return tm
+}
+
+// EndOfSecond returns the end time of the second.
+func (t Time) EndOfSecond() Time {
+	y, m, d := t.Date()
+	h, mm, s := t.Clock()
+	tm := Date(y, m, d, h, mm, s, 999999999, t.Location())
+	return tm
 }

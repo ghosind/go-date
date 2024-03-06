@@ -412,3 +412,119 @@ func TestStartOfSecond(t *testing.T) {
 		StartOfSecond().
 		Equal(Date(2006, 2, 3, 15, 30, 55, 0, tzLA)))
 }
+
+func TestEndOfYear(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0).
+		EndOfYear().
+		Equal(Date(2006, 12, 31, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0, tzLA).
+		EndOfYear().
+		Equal(Date(2006, 12, 31, 23, 59, 59, 999999999, tzLA)))
+}
+
+func TestEndOfHalfYear(t *testing.T) {
+	a := assert.New(t)
+
+	a.TrueNow(Date(2006, 1, 3, 15, 4, 5, 0).
+		EndOfHalfYear().
+		Equal(Date(2006, 6, 30, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 3, 15, 4, 5, 0).
+		EndOfHalfYear().
+		Equal(Date(2006, 6, 30, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 7, 3, 15, 4, 5, 0).
+		EndOfHalfYear().
+		Equal(Date(2006, 12, 31, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 12, 3, 15, 4, 5, 0).
+		EndOfHalfYear().
+		Equal(Date(2006, 12, 31, 23, 59, 59, 999999999)))
+}
+
+func TestEndOfQuarter(t *testing.T) {
+	a := assert.New(t)
+
+	a.TrueNow(Date(2006, 1, 15, 12, 30, 30, 999).
+		EndOfQuarter().
+		Equal(Date(2006, 3, 31, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 15, 12, 30, 30, 999).
+		EndOfQuarter().
+		Equal(Date(2006, 3, 31, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 4, 15, 12, 30, 30, 999).
+		EndOfQuarter().
+		Equal(Date(2006, 6, 30, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 12, 15, 12, 30, 30, 999).
+		EndOfQuarter().
+		Equal(Date(2006, 12, 31, 23, 59, 59, 999999999)))
+}
+
+func TestEndOfMonth(t *testing.T) {
+	a := assert.New(t)
+
+	a.TrueNow(Date(2006, 1, 15, 15, 4, 5, 0).
+		EndOfMonth().
+		Equal(Date(2006, 1, 31, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 15, 15, 4, 5, 0).
+		EndOfMonth().
+		Equal(Date(2006, 2, 28, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2008, 2, 15, 15, 4, 5, 0).
+		EndOfMonth().
+		Equal(Date(2008, 2, 29, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 6, 15, 15, 4, 5, 0).
+		EndOfMonth().
+		Equal(Date(2006, 6, 30, 23, 59, 59, 999999999)))
+}
+
+func TestEndOfDay(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0).
+		EndOfDay().
+		Equal(Date(2006, 2, 2, 23, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 2, 15, 4, 5, 0, tzLA).
+		EndOfDay().
+		Equal(Date(2006, 2, 2, 23, 59, 59, 999999999, tzLA)))
+}
+
+func TestEndOfHour(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 3, 15, 4, 5, 999).
+		EndOfHour().
+		Equal(Date(2006, 2, 3, 15, 59, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 3, 15, 4, 5, 999, tzLA).
+		EndOfHour().
+		Equal(Date(2006, 2, 3, 15, 59, 59, 999999999, tzLA)))
+}
+
+func TestEndOfMinute(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999).
+		EndOfMinute().
+		Equal(Date(2006, 2, 3, 15, 30, 59, 999999999)))
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999, tzLA).
+		EndOfMinute().
+		Equal(Date(2006, 2, 3, 15, 30, 59, 999999999, tzLA)))
+}
+
+func TestEndOfSecond(t *testing.T) {
+	a := assert.New(t)
+
+	tzLA, _ := time.LoadLocation("America/Los_Angeles")
+
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999).
+		EndOfSecond().
+		Equal(Date(2006, 2, 3, 15, 30, 55, 999999999)))
+	a.TrueNow(Date(2006, 2, 3, 15, 30, 55, 999, tzLA).
+		EndOfSecond().
+		Equal(Date(2006, 2, 3, 15, 30, 55, 999999999, tzLA)))
+}
