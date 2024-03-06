@@ -49,7 +49,7 @@ func TestNextLayoutToken(t *testing.T) {
 
 func TestNextLayoutTokenWithBuiltinLayout(t *testing.T) {
 	a := assert.New(t)
-	layout := "2006 06 January Jan 01 1 02 2 15 03 3 04 4 05 5 PM"
+	layout := "2006 06 January Jan 01 1 02 2 15 03 3 04 4 05 5 PM 0"
 	expectedTokens := []int{
 		layoutTokenYearLong, layoutTokenNone,
 		layoutTokenYear, layoutTokenNone,
@@ -66,7 +66,8 @@ func TestNextLayoutTokenWithBuiltinLayout(t *testing.T) {
 		layoutTokenMinute, layoutTokenNone,
 		layoutTokenSecondLong, layoutTokenNone,
 		layoutTokenSecond, layoutTokenNone,
-		layoutTokenPMUpper,
+		layoutTokenPMUpper, layoutTokenNone,
+		layoutTokenNone,
 		layoutTokenEnd,
 	}
 
