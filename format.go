@@ -25,6 +25,12 @@ const (
 	layoutTokenDay
 	// layoutTokenDayLong is the two-digits day.
 	layoutTokenDayLong
+	// layoutTokenDayOfWeek is the day of week that beginning at 0 (Sunday).
+	layoutTokenDayOfWeek
+	// layoutTokenDayOfWeek is the abbreviated name of the day of week.
+	layoutTokenDayOfWeekAbbr
+	// layoutTokenDayOfWeekFull is the name of the day of week.
+	layoutTokenDayOfWeekFull
 	// layoutTokenHour is the 24-hour clock hour that beginning at 1.
 	layoutTokenHour
 	// layoutTokenHourLong is the two-digits, 24-hour clock hour.
@@ -87,6 +93,26 @@ var fullMonthNames = []string{
 	"December",
 }
 
+var abbrWeekdayNames = []string{
+	"Sun",
+	"Mon",
+	"Tue",
+	"Wed",
+	"Thu",
+	"Fri",
+	"Sat",
+}
+
+var fullWeekdayNames = []string{
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+}
+
 // nextLayoutToken gets the next token in the layout, and return
 func nextLayoutToken(layout string) (int, string, string) {
 	if len(layout) == 0 {
@@ -101,6 +127,12 @@ func nextLayoutToken(layout string) (int, string, string) {
 			return layoutTokenYear, layout[0:2], layout[2:]
 		}
 	case 'M':
+		if strings.HasPrefix(layout, "Monday") {
+			return layoutTokenDayOfWeekFull, layout[0:6], layout[6:]
+		} else if strings.HasPrefix(layout, "Mon") {
+			return layoutTokenDayOfWeekAbbr, layout[0:3], layout[3:]
+		}
+
 		if strings.HasPrefix(layout, "MMMM") {
 			return layoutTokenMonthFull, layout[0:4], layout[4:]
 		} else if strings.HasPrefix(layout, "MMM") {
@@ -110,11 +142,27 @@ func nextLayoutToken(layout string) (int, string, string) {
 		} else {
 			return layoutTokenMonth, layout[0:1], layout[1:]
 		}
+	case 'J':
+		if strings.HasPrefix(layout, "Jan") {
+			if strings.HasPrefix(layout, "January") {
+				return layoutTokenMonthFull, layout[0:7], layout[7:]
+			} else {
+				return layoutTokenMonthAbbr, layout[0:3], layout[3:]
+			}
+		}
 	case 'D':
 		if strings.HasPrefix(layout, "DD") {
 			return layoutTokenDayLong, layout[0:2], layout[2:]
 		} else {
 			return layoutTokenDay, layout[0:1], layout[1:]
+		}
+	case 'd':
+		if strings.HasPrefix(layout, "dddd") {
+			return layoutTokenDayOfWeekFull, layout[0:4], layout[4:]
+		} else if strings.HasPrefix(layout, "ddd") {
+			return layoutTokenDayOfWeekAbbr, layout[0:3], layout[3:]
+		} else {
+			return layoutTokenDayOfWeek, layout[0:1], layout[1:]
 		}
 	case 'H':
 		if strings.HasPrefix(layout, "HH") {
@@ -152,23 +200,15 @@ func nextLayoutToken(layout string) (int, string, string) {
 		return layoutTokenPMUpper, layout[0:1], layout[1:]
 	case 'a':
 		return layoutTokenPMLower, layout[0:1], layout[1:]
+	case 'P':
+		if strings.HasPrefix(layout, "PM") {
+			return layoutTokenPMUpper, layout[0:2], layout[2:]
+		}
 	case 'Z':
 		if strings.HasPrefix(layout, "ZZ") {
 			return layoutTokenTZ, layout[0:2], layout[2:]
 		} else {
 			return layoutTokenTZColon, layout[0:1], layout[1:]
-		}
-	case 'P':
-		if strings.HasPrefix(layout, "PM") {
-			return layoutTokenPMUpper, layout[0:2], layout[2:]
-		}
-	case 'J':
-		if strings.HasPrefix(layout, "Jan") {
-			if strings.HasPrefix(layout, "January") {
-				return layoutTokenMonthFull, layout[0:7], layout[7:]
-			} else {
-				return layoutTokenMonthAbbr, layout[0:3], layout[3:]
-			}
 		}
 	case '\\': // Escape next character
 		if len(layout) >= 2 {
@@ -264,6 +304,14 @@ func (t Time) formatByLayout(layout string, buf []byte) []byte {
 			buf = appendIntToBuffer(buf, t.Day(), 1)
 		case layoutTokenDayLong:
 			buf = appendIntToBuffer(buf, t.Day(), 2)
+		case layoutTokenDayOfWeek:
+			buf = appendIntToBuffer(buf, int(t.Weekday()), 1)
+		case layoutTokenDayOfWeekAbbr:
+			abbr := abbrWeekdayNames[t.Weekday()]
+			buf = append(buf, abbr...)
+		case layoutTokenDayOfWeekFull:
+			name := fullWeekdayNames[t.Weekday()]
+			buf = append(buf, name...)
 		case layoutTokenHour:
 			buf = appendIntToBuffer(buf, t.Hour(), 1)
 		case layoutTokenHourLong:

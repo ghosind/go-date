@@ -9,7 +9,7 @@ import (
 
 func TestNextLayoutToken(t *testing.T) {
 	a := assert.New(t)
-	layout := "YYYY YY MMMM MMM MM M DD D HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
+	layout := "YYYY YY MMMM MMM MM M DD D dddd ddd d HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
 	expectedTokens := []int{
 		layoutTokenYearLong, layoutTokenNone,
 		layoutTokenYear, layoutTokenNone,
@@ -19,6 +19,9 @@ func TestNextLayoutToken(t *testing.T) {
 		layoutTokenMonth, layoutTokenNone,
 		layoutTokenDayLong, layoutTokenNone,
 		layoutTokenDay, layoutTokenNone,
+		layoutTokenDayOfWeekFull, layoutTokenNone,
+		layoutTokenDayOfWeekAbbr, layoutTokenNone,
+		layoutTokenDayOfWeek, layoutTokenNone,
 		layoutTokenHourLong, layoutTokenNone,
 		layoutTokenHour, layoutTokenNone,
 		layoutTokenHour12Long, layoutTokenNone,
@@ -49,7 +52,7 @@ func TestNextLayoutToken(t *testing.T) {
 
 func TestNextLayoutTokenWithBuiltinLayout(t *testing.T) {
 	a := assert.New(t)
-	layout := "2006 06 January Jan 01 1 02 2 15 03 3 04 4 05 5 PM 0"
+	layout := "2006 06 January Jan 01 1 02 2 Monday Mon 15 03 3 04 4 05 5 PM 0"
 	expectedTokens := []int{
 		layoutTokenYearLong, layoutTokenNone,
 		layoutTokenYear, layoutTokenNone,
@@ -59,6 +62,8 @@ func TestNextLayoutTokenWithBuiltinLayout(t *testing.T) {
 		layoutTokenMonth, layoutTokenNone,
 		layoutTokenDayLong, layoutTokenNone,
 		layoutTokenDay, layoutTokenNone,
+		layoutTokenDayOfWeekFull, layoutTokenNone,
+		layoutTokenDayOfWeekAbbr, layoutTokenNone,
 		layoutTokenHourLong, layoutTokenNone,
 		layoutTokenHour12Long, layoutTokenNone,
 		layoutTokenHour12, layoutTokenNone,
@@ -95,38 +100,38 @@ func TestFormat(t *testing.T) {
 	tzLA, _ := time.LoadLocation("America/Los_Angeles")
 	tzSH, _ := time.LoadLocation("Asia/Shanghai")
 
-	layout := "YYYY YY MMMM MMM MM M DD D HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
+	layout := "YYYY YY MMMM MMM MM M DD D dddd ddd d HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
 	cases := []struct {
 		tm     Time
 		expect string
 	}{
 		{
 			Date(2024, 1, 1, 0, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+			"2024 24 January Jan 01 1 01 1 Monday Mon 1 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
 		},
 		{
 			Date(2024, 10, 1, 0, 0, 0, 0),
-			"2024 24 October Oct 10 10 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+			"2024 24 October Oct 10 10 01 1 Tuesday Tue 2 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
 		},
 		{
 			Date(2024, 1, 1, 1, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 01 1 01 1 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+			"2024 24 January Jan 01 1 01 1 Monday Mon 1 01 1 01 1 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
 		},
 		{
 			Date(2024, 1, 1, 12, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 12 12 12 12 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
+			"2024 24 January Jan 01 1 01 1 Monday Mon 1 12 12 12 12 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
 		},
 		{
 			Date(2024, 1, 1, 13, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 13 13 01 1 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
+			"2024 24 January Jan 01 1 01 1 Monday Mon 1 13 13 01 1 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
 		},
 		{
 			Date(2024, 1, 1, 0, 0, 0, 0, tzLA),
-			"2024 24 January Jan 01 1 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am -08:00 -0800 Ho",
+			"2024 24 January Jan 01 1 01 1 Monday Mon 1 00 0 12 12 00 0 00 0 000 00 0 AM am -08:00 -0800 Ho",
 		},
 		{
 			Date(2024, 1, 1, 0, 0, 0, 0, tzSH),
-			"2024 24 January Jan 01 1 01 1 00 0 12 12 00 0 00 0 000 00 0 AM am +08:00 +0800 Ho",
+			"2024 24 January Jan 01 1 01 1 Monday Mon 1 00 0 12 12 00 0 00 0 000 00 0 AM am +08:00 +0800 Ho",
 		},
 	}
 
