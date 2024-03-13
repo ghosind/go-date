@@ -50,6 +50,9 @@ fmt.Print(fm.Format("YYYY-MM-DD HH:mm:ss")) // 2024-01-10 23:59:30
 | `MMM`  | The abbreviated month name                  |     `Jan`-`Dec`      |
 |  `DD`  | The day of month, 2-digits                  |      `01`-`31`       |
 |  `D`   | The day of month, beginning at 1            |       `1`-`31`       |
+| `dddd` | The day of week                             |  `Sunday`-`Friday`   |
+| `ddd`  | The abbreviated name of weekday             |     `Sun`-`Fri`      |
+|  `d`   | The day of week, beginning at 0 (Sunday)    |       `0`-`6`        |
 |  `HH`  | The hour of 24-hour clock, 2-digits         |      `00`-`23`       |
 |  `H`   | The hour of 24-hour clock, beginning at 1   |       `0`-`23`       |
 |  `hh`  | The hour of 12-hour clock, 2-digits         |      `01`-`12`       |
