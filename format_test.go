@@ -1,12 +1,20 @@
 package date_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/ghosind/go-assert"
 	"github.com/ghosind/go-date"
 )
+
+func ExampleFormat() {
+	tm := date.Date(2006, time.January, 2, 15, 4, 5, 0)
+	fmt.Println(tm.Format("YYYY-MM-DDTHH:mm:ss"))
+	// Output:
+	// 2006-01-02T15:04:05
+}
 
 func TestAppendFormat(t *testing.T) {
 	a := assert.New(t)

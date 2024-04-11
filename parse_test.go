@@ -1,12 +1,22 @@
 package date_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
 	"github.com/ghosind/go-assert"
 	"github.com/ghosind/go-date"
 )
+
+func ExampleParse() {
+	tm, err := date.Parse("YYYY-MM-DDTHH:mm:ss", "2006-01-02T15:04:05")
+	fmt.Println(tm)
+	fmt.Println(err)
+	// Output:
+	// 2006-01-02 15:04:05 +0000 UTC
+	// nil
+}
 
 func TestParse(t *testing.T) {
 	a := assert.New(t)
