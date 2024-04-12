@@ -9,7 +9,7 @@ import (
 	"github.com/ghosind/go-date"
 )
 
-func ExampleFormat() {
+func ExampleTime_Format() {
 	tm := date.Date(2006, time.January, 2, 15, 4, 5, 0)
 	fmt.Println(tm.Format("YYYY-MM-DDTHH:mm:ss"))
 	// Output:
@@ -31,43 +31,63 @@ func TestFormat(t *testing.T) {
 	tzLA, _ := time.LoadLocation("America/Los_Angeles")
 	tzSH, _ := time.LoadLocation("Asia/Shanghai")
 
-	layout := "YYYY YY MMMM MMM MM M DD D dddd ddd d HH H hh h mm m ss s SSS SS S A a Z ZZ \\Ho"
 	cases := []struct {
 		tm     date.Time
+		layout string
 		expect string
 	}{
 		{
-			date.Date(2024, 1, 1, 0, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 Monday Mon 1 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+			date.Date(2006, time.January, 2, 15, 4, 5, 0),
+			"YYYY-MM-DDTHH:mm:ss", "2006-01-02T15:04:05",
 		},
 		{
-			date.Date(2024, 10, 1, 0, 0, 0, 0),
-			"2024 24 October Oct 10 10 01 1 Tuesday Tue 2 00 0 12 12 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+			date.Date(2006, time.January, 2, 15, 4, 5, 0),
+			"YY-M-DTH:m:s", "06-1-2T15:4:5",
 		},
 		{
-			date.Date(2024, 1, 1, 1, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 Monday Mon 1 01 1 01 1 00 0 00 0 000 00 0 AM am +00:00 +0000 Ho",
+			date.Date(2006, time.January, 2, 15, 4, 5, 0),
+			"dddd, DD MMMM, YYYY", "Monday, 02 January, 2006",
 		},
 		{
-			date.Date(2024, 1, 1, 12, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 Monday Mon 1 12 12 12 12 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
+			date.Date(2006, time.January, 2, 15, 4, 5, 0),
+			"ddd, DD MMM, YYYY", "Mon, 02 Jan, 2006",
 		},
 		{
-			date.Date(2024, 1, 1, 13, 0, 0, 0),
-			"2024 24 January Jan 01 1 01 1 Monday Mon 1 13 13 01 1 00 0 00 0 000 00 0 PM pm +00:00 +0000 Ho",
+			date.Date(2006, time.January, 2, 15, 4, 5, 0),
+			"d, DD MMM, YYYY", "1, 02 Jan, 2006",
 		},
 		{
-			date.Date(2024, 1, 1, 0, 0, 0, 0, tzLA),
-			"2024 24 January Jan 01 1 01 1 Monday Mon 1 00 0 12 12 00 0 00 0 000 00 0 AM am -08:00 -0800 Ho",
+			date.Date(2006, time.January, 2, 15, 4, 5, 999000000),
+			"hh:mm:ss.SSS A", "03:04:05.999 PM",
 		},
 		{
-			date.Date(2024, 1, 1, 0, 0, 0, 0, tzSH),
-			"2024 24 January Jan 01 1 01 1 Monday Mon 1 00 0 12 12 00 0 00 0 000 00 0 AM am +08:00 +0800 Ho",
+			date.Date(2006, time.January, 2, 3, 4, 5, 999000000),
+			"hh:mm:ss.SS A", "03:04:05.99 AM",
+		},
+		{
+			date.Date(2006, time.January, 2, 15, 4, 5, 999000000),
+			"h:m:s.S a", "3:4:5.9 pm",
+		},
+		{
+			date.Date(2006, time.January, 2, 3, 4, 5, 0),
+			"h:m:s a", "3:4:5 am",
+		},
+		{
+			date.Date(2006, time.January, 2, 15, 4, 5, 0, tzLA),
+			"YYYY-MM-DD HH:mm:ss Z", "2006-01-02 15:04:05 -08:00",
+		},
+		{
+			date.Date(2006, time.January, 2, 15, 4, 5, 0, tzSH),
+			"YYYY-MM-DD HH:mm:ss ZZ", "2006-01-02 15:04:05 +0800",
+		},
+		{
+			date.Date(2006, time.January, 2, 15, 4, 5, 0),
+			"2006-01-02T15:04:05", "2006-01-02T15:04:05",
 		},
 	}
 
 	for _, test := range cases {
-		testFormat(a, test.tm, layout, test.expect)
+		testFormat(a, test.tm, test.layout, test.expect)
 	}
 }
 

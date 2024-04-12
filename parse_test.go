@@ -10,6 +10,7 @@ import (
 )
 
 func ExampleParse() {
+	time.Local = time.UTC // force local to UTC, just for the example
 	tm, err := date.Parse("YYYY-MM-DDTHH:mm:ss", "2006-01-02T15:04:05")
 	fmt.Println(tm)
 	fmt.Println(err)
@@ -73,6 +74,10 @@ func TestParse(t *testing.T) {
 		{
 			date.Date(2024, 1, 1, 0, 0, 0, 900000000, time.Local),
 			"YYYY-MM-DD HH:mm:ss.S", "2024-01-01 00:00:00.9",
+		},
+		{
+			date.Date(2006, time.January, 2, 15, 4, 5, 0, time.Local),
+			"2006-01-02T15:04:05", "2006-01-02T15:04:05",
 		},
 	}
 
